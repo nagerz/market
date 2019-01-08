@@ -1,6 +1,5 @@
 require './lib/vendor'
 require './lib/market'
-require 'pry'
 require 'minitest/autorun'
 require 'minitest/pride'
 
@@ -81,6 +80,32 @@ class MarketTest < Minitest::Test
     assert_equal expected, @market.total_inventory
   end
 
+  def test_it_doesnt_have_enough_item_in_stock_to_sell
+    @market.add_vendor(@vendor_1)
+    @market.add_vendor(@vendor_2)
+    @market.add_vendor(@vendor_3)
 
+    assert_equal false, @market.sell("Peaches", 200)
+    assert_equal false, @market.sell("Onions", 1)
+  end
+
+  def test_it_can_sell_item
+    @market.add_vendor(@vendor_1)
+    @market.add_vendor(@vendor_2)
+    @market.add_vendor(@vendor_3)
+
+    assert_equal true, @market.sell("Peaches", 40)
+  end
+
+  def test_it_reduces_vendor_quantities
+    @market.add_vendor(@vendor_1)
+    @market.add_vendor(@vendor_2)
+    @market.add_vendor(@vendor_3)
+
+    @market.sell("Peaches", 40)
+
+    assert_equal 0, @vendor_1.check_stock("Peaches")
+    assert_equal 60, @vendor_3.check_stock("Peaches")
+  end
 
 end

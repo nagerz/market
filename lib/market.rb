@@ -35,7 +35,30 @@ class Market
       end
     end
     inventory_list
+  end
 
+  def sell(item, quantity)
+    if total_inventory[item] < quantity
+      return false
+    else
+      sell_item(item, quantity)
+      return true
+    end
+  end
+
+  def sell_item(item, quantity)
+    @vendors.each do |vendor|
+      if vendor.check_stock(item) > 0
+        vendor_qty = vendor.check_stock(item)
+        if vendor_qty >= quantity
+          vendor.inventory[item] -= quantity
+          return
+        else
+          vendor.inventory[item] = 0
+          quantity -= vendor_qty
+        end
+      end
+    end
   end
 
 end
